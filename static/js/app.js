@@ -6,7 +6,6 @@ d3.json("samples.json").then((data) => {
 
 
 
-
 function getMetadata(selection) {
   d3.json("samples.json").then(data => {
     var metadata = data.metadata;
@@ -22,14 +21,16 @@ function getMetadata(selection) {
 
 getMetadata("940")
 
-
-function init() {
+function init () {
   d3.json("samples.json").then(data => {
-    console.log(data);
-    
+    // console.log(data);
+    var menu = d3.select("#selDataset");
+    var id_names = data.names;
+    id_names.forEach(id => {
+      menu.append("option").text(id).property("value", id);
+    })
+  });
 }
-
-
 
 
 
@@ -42,10 +43,9 @@ function buildPlots(selection) {
     var sample_values = filteredData.sample_values;
     var OTU_labels = filteredData.otu_labels;
     var barlabels = OTU_id.slice(0,10).map(otuID => `OTU ${otuID}`).reverse();
-    console.log(OTU_id)
-    console.log(sample_values)
-    console.log(OTU_labels)
-
+    // console.log(OTU_id)
+    // console.log(sample_values)
+    // console.log(OTU_labels)
 
     var trace1 = {
       type: "bar",
@@ -86,21 +86,36 @@ function buildPlots(selection) {
 
 buildPlots("940")
 
+// d3.selectAll("#selDataset").on("change", menuChange);
+
+
+// function menuChange (selection) {
+//   d3.json("samples.json").then(data => {
+//     // console.log(data);
+//     var menu = d3.select("#selDataset");
+//     var id_names = data.names;
+//     var dataset = menu.property("value");
+
+//     if (id_names == dataset);
+
+//     updatePlotly(selection);
+   
+//     })
+//   };
+
+
+// function updatePlotly(selection){
+//   buildPlots(selection);
+//   getMetadata(selection);
+// }
+
+
+
+init()
 
 
 
 
-
-d3.selectAll("body").on("change", menuChange);
-
-function menuChange(selection) {
-  // Use D3 to select the dropdown menu
-  var dropdownMenu = d3.selectAll("#selDataset").node();
-  // Assign the dropdown menu item ID to a variable
-  var dropdownMenuID = dropdownMenu.id;
-  // Assign the dropdown menu option to a variable
-  var selectedOption = dropdownMenu.value;
-}
 
 
 
