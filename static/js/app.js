@@ -4,12 +4,37 @@ d3.json("samples.json").then((data) => {
   console.log(data)
 });
 
+d3.json("samples.json").then(data => {
+  // console.log(data);
 
+  // populate drop box with values and get new data when selecting new value. 
+  var id_names = data.names;
+  console.log(id_names);
+  id_names.forEach((name) => {
+    var menu = d3.select("#selDataset");
+    var newSelection = menu.append("option");
+    newSelection.attr("value",name);
+    newSelection.text(name);
+    var selectedID = menu.node().value;
+    console.log(selectedID)
+  })
+})
 
-function getMetadata(selection) {
+// set a default ID so the page loads with the plots straight away
+var defaultID = "940"
+optionChanged(defaultID)
+
+// run functions to update page each time you selct new ID from dropdown
+function optionChanged(selectedID){
+  getMetadata(selectedID);
+  buildPlots(selectedID);
+}
+
+// get metadata, filter the data and store in variables
+function getMetadata(selectedID) {
   d3.json("samples.json").then(data => {
     var metadata = data.metadata;
-    var filteredData = metadata.filter(row => row.id == selection)[0];
+    var filteredData = metadata.filter(row => row.id == selectedID)[0];
     var info = d3.select("#sample-metadata");
     info.html("");
     Object.entries(filteredData).forEach(([key,value]) => {
@@ -19,26 +44,12 @@ function getMetadata(selection) {
   })
 }
 
-getMetadata("940")
-
-function init () {
-  d3.json("samples.json").then(data => {
-    // console.log(data);
-    var menu = d3.select("#selDataset");
-    var id_names = data.names;
-    id_names.forEach(id => {
-      menu.append("option").text(id).property("value", id);
-    })
-  });
-}
-
-
-
-function buildPlots(selection) {
+// create function to build each plot when a new ID is selected 
+function buildPlots(selectedID) {
   d3.json("samples.json").then(data => {
     var samples = data.samples;
-    var filteredData = samples.filter(row => row.id == selection)[0];
-    // console.log(filteredData)
+    var filteredData = samples.filter(row => row.id == selectedID)[0];
+    console.log(filteredData)
     var OTU_id = filteredData.otu_ids;
     var sample_values = filteredData.sample_values;
     var OTU_labels = filteredData.otu_labels;
@@ -84,34 +95,6 @@ function buildPlots(selection) {
 });
 };
 
-buildPlots("940")
-
-// d3.selectAll("#selDataset").on("change", menuChange);
-
-
-// function menuChange (selection) {
-//   d3.json("samples.json").then(data => {
-//     // console.log(data);
-//     var menu = d3.select("#selDataset");
-//     var id_names = data.names;
-//     var dataset = menu.property("value");
-
-//     if (id_names == dataset);
-
-//     updatePlotly(selection);
-   
-//     })
-//   };
-
-
-// function updatePlotly(selection){
-//   buildPlots(selection);
-//   getMetadata(selection);
-// }
-
-
-
-init()
 
 
 
@@ -130,40 +113,6 @@ init()
 
 
 
-
-
-
-
-//   Slice the first 10 objects for plotting
-//   data = data.slice(0, 10);
-
-//   // Reverse the array due to Plotly's defaults
-//   data = data.reverse();
-
-//   // Trace1 for the Greek Data
-//   var trace1 = {
-//     x: data.map(row => row.sample_values),
-//     y: data.map(row => row.otu_ids),
-//     text: data.map(row => row.otu_labels),
-//     name: "Greek",
-//     type: "bar",
-//     orientation: "h"
-//   };
-
-//   // data
-//   var chartData = [trace1];
-
-//   // Apply the group bar mode to the layout
-//   var layout = {
-//     title: "The highest critically acclaimed movies.",
-//     xaxis: { title: "Title" },
-//     yaxis: { title: "Metascore (Critic) Rating"}
-//   };
-
-
-//   // Render the plot to the div tag with id "plot"
-//   Plotly.newPlot("plot", chartData, layout);
-// });
 
 
 
